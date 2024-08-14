@@ -36,7 +36,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      activity: result.rows[0], // Passa i dati dell'attività come props alla pagina
+      activity,
     },
     revalidate: 1, // Rigenera la pagina ogni secondo per aggiornare i dati
   };
@@ -47,11 +47,32 @@ export default function ActivityPage({ activity }) {
     return <div>Loading...</div>;
   }
 
+  // Verifica che le proprietà siano definite e che siano array
+  const keyCompetencies = activity.keyCompetencies || [];
+  const manifestoPrinciples = activity.manifestoPrinciples || [];
+  const tags = activity.tags || [];
+  const sections = activity.sections || [];
+
   return (
     <div>
       <h1>{activity.title}</h1>
-      <p>{activity.description}</p>
-      {/* Visualizza gli altri dettagli dell'attività */}
+      <p><strong>Ordine e grado:</strong> {activity.order_grade}</p>
+      <p><strong>Argomento:</strong> {activity.topic}</p>
+      <p><strong>Materia:</strong> {activity.subject}</p>
+      <p><strong>Competenze chiave:</strong> {keyCompetencies.join(', ')}</p>
+      <p><strong>Principi del manifesto:</strong> {manifestoPrinciples.join(', ')}</p>
+      <p><strong>Descrizione:</strong> {activity.description}</p>
+      <p><strong>Durata complessiva:</strong> {activity.totalDuration} minuti</p>
+      <p><strong>Tag:</strong> {tags.join(', ')}</p>
+
+      <h2>Sezioni dell'attività</h2>
+      {sections.map((section, index) => (
+        <div key={index}>
+          <h3>Sezione {index + 1}: {section.title}</h3>
+          <p><strong>Descrizione:</strong> {section.description}</p>
+          <p><strong>Durata:</strong> {section.duration} minuti</p>
+        </div>
+      ))}
     </div>
   );
 }

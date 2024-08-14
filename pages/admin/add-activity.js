@@ -1,7 +1,32 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import db from '/lib/db'; // Assicurati di importare correttamente il modulo per la connessione al database
 
-export default function AddActivity() {
+export async function getServerSideProps() {
+  const orderGradesRes = await db.query('SELECT name FROM order_grades');
+  const topicsRes = await db.query('SELECT name FROM topics');
+  const subjectsRes = await db.query('SELECT name FROM subjects');
+  const keyCompetenciesRes = await db.query('SELECT name FROM key_competencies');
+  const manifestoPrinciplesRes = await db.query('SELECT name FROM manifesto_principles');
+
+  return {
+    props: {
+      availableOrderGrades: orderGradesRes.rows.map(row => row.name),
+      availableTopics: topicsRes.rows.map(row => row.name),
+      availableSubjects: subjectsRes.rows.map(row => row.name),
+      availableKeyCompetencies: keyCompetenciesRes.rows.map(row => row.name),
+      availableManifestoPrinciples: manifestoPrinciplesRes.rows.map(row => row.name),
+    },
+  };
+}
+
+export default function AddActivity({
+  availableOrderGrades,
+  availableTopics,
+  availableSubjects,
+  availableKeyCompetencies,
+  availableManifestoPrinciples,
+}) {
   const [title, setTitle] = useState('');
   const [orderGrade, setOrderGrade] = useState('');
   const [topic, setTopic] = useState('');
@@ -36,26 +61,6 @@ export default function AddActivity() {
 
     return slug;
   };
-
-  const availableOrderGrades = ["primaria", "secondaria I grado", "secondaria II grado"];
-  const availableTopics = [
-    "Cittadinanza digitale",
-    "Consapevolezza e responsabilità",
-    "Social",
-    "Hate speech",
-    "Inclusione"
-  ];
-  const availableSubjects = ["Educazione Civica", "Area Umanistico-Letteraria"];
-  const availableKeyCompetencies = [
-    "Consapevolezza ed espressione culturale",
-    "Comunicazione nella madrelingua",
-    "Competenza digitale",
-    "Competenze sociali e civiche"
-  ];
-  const availableManifestoPrinciples = [
-    "05. Le parole sono un ponte",
-    "06. Le parole hanno conseguenze"
-  ];
 
   const handleCheckboxChange = (value, setState, currentState) => {
     setState(
