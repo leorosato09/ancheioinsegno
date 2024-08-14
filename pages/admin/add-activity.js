@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-// Importazione corretta del modulo 'db' per evitare l'errore 'fs'
-import db from '../../lib/db';
 
 export default function AddActivity() {
   const [title, setTitle] = useState('');
@@ -26,15 +24,16 @@ export default function AddActivity() {
     let suffix = 1;
   
     while (exists) {
-      const result = await db.query('SELECT COUNT(*) FROM activities WHERE slug = $1', [slug]);
-      if (result.rows[0].count == 0) {
+      const response = await fetch(`/api/activities/check-slug?slug=${slug}`);
+      const data = await response.json();
+      if (!data.exists) {
         exists = false;
       } else {
         slug = `${slug}-${suffix}`;
         suffix += 1;
       }
     }
-  
+
     return slug;
   };
 
@@ -163,7 +162,7 @@ export default function AddActivity() {
     <div>
       <label>Ordine e grado:</label>
       <select value={orderGrade} onChange={(e) => setOrderGrade(e.target.value)} required>
-        <option value="">Seleziona un'opzione</option>
+        <option value="">Seleziona un&apos;opzione</option>
         {availableOrderGrades.map(order => (
           <option key={order} value={order}>
             {order}
@@ -261,7 +260,7 @@ export default function AddActivity() {
     </div>
 
     <div>
-      <label>Sezioni dell'attività:</label>
+      <label>Sezioni dell&apos;attività:</label>
       {sections.map((section, index) => (
         <div key={index}>
           <div>

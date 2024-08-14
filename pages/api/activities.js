@@ -1,15 +1,9 @@
-import db from '../../../lib/db';
+import db from '/lib/db';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const { title, orderGrade, topic, subject, keyCompetencies, manifestoPrinciples, description, sections, totalDuration, tags, slug } = req.body;
-
-      // Verifica se lo slug esiste già
-      const slugCheckResult = await db.query('SELECT COUNT(*) FROM activities WHERE slug = $1', [slug]);
-      if (slugCheckResult.rows[0].count > 0) {
-        return res.status(400).json({ success: false, error: 'duplicate key value violates unique constraint "unique_slug"' });
-      }
 
       // Inserisci l'attività nel database
       await db.query(
@@ -21,6 +15,17 @@ export default async function handler(req, res) {
       res.status(201).json({ success: true });
     } catch (error) {
       console.error('Errore durante l\'inserimento dell\'attività:', error);
+      res.status(400).json({ success: false, error: error.message });
+    }
+  } else if (req.method === 'GET' && req.query.slug) {
+    // Verifica se lo slug esiste già
+    const { slug } = req.query;
+    try {
+      const result = await db.query('SELECT COUNT(*) FROM activities WHERE slug = $1', [slug]);
+      const exists = result.rows[0].count > 0;
+      res.status(200).json({ exists });
+    } catch (error) {
+      console.error('Errore durante la verifica dello slug:', error);
       res.status(400).json({ success: false, error: error.message });
     }
   } else {
