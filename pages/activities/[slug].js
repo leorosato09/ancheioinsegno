@@ -65,7 +65,7 @@ export default function ActivityPage({ activity }) {
       <p><strong>Durata complessiva:</strong> {activity.totalDuration} minuti</p>
       <p><strong>Tag:</strong> {tags.join(', ')}</p>
 
-      <h2>Sezioni dell'attività</h2>
+      <h2>Sezioni dell&apos;attività</h2>
       {sections.map((section, index) => (
         <div key={index}>
           <h3>Sezione {index + 1}: {section.title}</h3>
