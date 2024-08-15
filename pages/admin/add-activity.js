@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import db from '/lib/db'; // Assicurati di importare correttamente il modulo per la connessione al database
+import db from '/lib/db';
 
 export async function getServerSideProps() {
   const orderGradesRes = await db.query('SELECT name FROM order_grades');

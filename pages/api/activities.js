@@ -5,7 +5,6 @@ export default async function handler(req, res) {
     try {
       const { title, orderGrade, topic, subject, keyCompetencies, manifestoPrinciples, description, sections, totalDuration, tags, slug } = req.body;
 
-      // Inserisci l'attività nel database
       await db.query(
         `INSERT INTO activities (title, order_grade, topic, subject, key_competencies, manifesto_principles, description, sections, total_duration, tags, slug)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
@@ -18,7 +17,6 @@ export default async function handler(req, res) {
       res.status(400).json({ success: false, error: error.message });
     }
   } else if (req.method === 'GET' && req.query.slug) {
-    // Verifica se lo slug esiste già
     const { slug } = req.query;
     try {
       const result = await db.query('SELECT COUNT(*) FROM activities WHERE slug = $1', [slug]);

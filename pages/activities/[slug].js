@@ -8,7 +8,7 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: 'blocking', // Utilizza 'blocking' per generare nuove pagine al volo
+    fallback: 'blocking',
   };
 }
 
