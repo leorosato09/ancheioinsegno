@@ -15,7 +15,6 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const { slug } = params;
 
-  // Recupera i dettagli dell'attività dal database in base allo slug
   const result = await db.query('SELECT * FROM activities WHERE slug = $1', [slug]);
 
   if (result.rows.length === 0) {
@@ -26,7 +25,6 @@ export async function getStaticProps({ params }) {
 
   const activity = result.rows[0];
 
-  // Converti tutti i campi di tipo Date in stringhe
   if (activity.created_at) {
     activity.created_at = activity.created_at.toISOString();
   }
@@ -38,7 +36,7 @@ export async function getStaticProps({ params }) {
     props: {
       activity,
     },
-    revalidate: 1, // Rigenera la pagina ogni secondo per aggiornare i dati
+    revalidate: 1,
   };
 }
 
@@ -47,30 +45,28 @@ export default function ActivityPage({ activity }) {
     return <div>Loading...</div>;
   }
 
-  // Verifica che le proprietà siano definite e che siano array
   const keyCompetencies = activity.keyCompetencies || [];
   const manifestoPrinciples = activity.manifestoPrinciples || [];
   const tags = activity.tags || [];
   const sections = activity.sections || [];
 
   return (
-    <div>
-      <h1>{activity.title}</h1>
-      <p><strong>Ordine e grado:</strong> {activity.order_grade}</p>
-      <p><strong>Argomento:</strong> {activity.topic}</p>
-      <p><strong>Materia:</strong> {activity.subject}</p>
-      <p><strong>Competenze chiave:</strong> {keyCompetencies.join(', ')}</p>
-      <p><strong>Principi del manifesto:</strong> {manifestoPrinciples.join(', ')}</p>
-      <p><strong>Descrizione:</strong> {activity.description}</p>
-      <p><strong>Durata complessiva:</strong> {activity.totalDuration} minuti</p>
-      <p><strong>Tag:</strong> {tags.join(', ')}</p>
+    <div className="container">
+      <h1 className="title">{activity.title}</h1>
+      <p className="detail"><strong>Ordine e grado:</strong> {activity.order_grade}</p>
+      <p className="detail"><strong>Argomento:</strong> {activity.topic}</p>
+      <p className="detail"><strong>Materia:</strong> {activity.subject}</p>
+      <p className="detail"><strong>Competenze chiave:</strong> {keyCompetencies.join(', ')}</p>
+      <p className="detail"><strong>Principi del manifesto:</strong> {manifestoPrinciples.join(', ')}</p>
+      <p className="description"><strong>Descrizione:</strong> {activity.description}</p>
+      <p className="tags"><strong>Tag:</strong> {tags.join(', ')}</p>
 
-      <h2>Sezioni dell&apos;attività</h2>
+      <h2 className="sectionsTitle">Sezioni dell&apos;attività</h2>
       {sections.map((section, index) => (
-        <div key={index}>
-          <h3>Sezione {index + 1}: {section.title}</h3>
-          <p><strong>Descrizione:</strong> {section.description}</p>
-          <p><strong>Durata:</strong> {section.duration} minuti</p>
+        <div key={index} className="section">
+          <h3 className="sectionTitle">Sezione {index + 1}: {section.title}</h3>
+          <p className="sectionDetail"><strong>Descrizione:</strong> {section.description}</p>
+          <p className="sectionDetail"><strong>Durata:</strong> {section.duration} minuti</p>
         </div>
       ))}
     </div>
