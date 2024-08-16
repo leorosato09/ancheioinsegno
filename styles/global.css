@@ -1,5 +1,90 @@
 /* /styles/global.css */
 
+header {
+  height: 130px;
+  width: 100%;
+  background-color: #D3D600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+  position: relative; /* Necessario per posizionare il menu a comparsa */
+}
+
+.header-logos {
+  display: flex;
+  align-items: center;
+}
+
+.header-logos img {
+  height: 80px; /* Altezza dei loghi */
+  margin-right: 15px;
+}
+
+/* Stile per il menu hamburger */
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.hamburger-menu div {
+  width: 28px;
+  height: 6px;
+  background-color: #212457;
+}
+
+/* Stile per il menu a comparsa */
+.nav-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 0;
+  background-color: white;
+  overflow-x: hidden;
+  transition: 0.5s;
+  z-index: 1000;
+}
+
+.nav-overlay-content {
+  position: relative;
+  top: 25%;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.nav-overlay-content a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #1e1068;
+  display: block;
+  transition: 0.3s;
+}
+
+.nav-overlay-content a:hover {
+  color: #d3d600;
+}
+
+.closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 36px;
+  cursor: pointer;
+}
+
+/* Apertura del menu */
+.open-nav {
+  width: 250px;
+}
+
 body {
     margin: 0;
     padding: 0;

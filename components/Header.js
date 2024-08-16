@@ -1,90 +1,64 @@
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+import { useState } from 'react';
 
 const Header = () => {
   const { data: session } = useSession(); // Recupera la sessione corrente
+  const [navOpen, setNavOpen] = useState(false); // Stato per gestire l'apertura del menu
 
   return (
-    <header style={headerStyle}>
-      <nav>
-        <ul style={navListStyle}>
-          <li style={navItemStyle}>
-            <Link href="/">
-              Home
-            </Link>
-          </li>
-          <li style={navItemStyle}>
-            <Link href="/activities">
-              Attività Formative
-            </Link>
-          </li>
+    <header>
+      <div className="header-logos">
+        <image src="/images/ParoleO_Stili_Logo.svg" alt="Parole O_Stili" />
+        <image src="/images/AncheIoInsegno_Logo.svg" alt="#AncheIoInsegno" />
+      </div>
+      <div className="hamburger-menu" onClick={() => setNavOpen(true)}>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+
+      {/* Menu a comparsa */}
+      <div className={`nav-overlay ${navOpen ? 'open-nav' : ''}`}>
+        <span className="closebtn" onClick={() => setNavOpen(false)}>&times;</span>
+        <div className="nav-overlay-content">
+          <Link href="/">Home</Link>
+          <Link href="/activities">Attività Formative</Link>
           {session && session.user.role === 'admin' && (
-            <li style={navItemStyle}>
-              <Link href="/admin/add-activity">
-                Aggiungi Attività
-              </Link>
-            </li>
+            <Link href="/admin/add-activity">Aggiungi Attività</Link>
           )}
           {!session ? (
             <>
-              <li style={navItemStyle}>
-                <Link href="/login">
-                  Login
-                </Link>
-              </li>
-              <li style={navItemStyle}>
-                <Link href="/signup">
-                  Registrati
-                </Link>
-              </li>
+              <Link href="/login">Login</Link>
+              <Link href="/signup">Registrati</Link>
             </>
           ) : (
             <>
-              <li style={navItemStyle}>
-                <Link href="/profile">
-                  Profilo
-                </Link>
-              </li>
-              <li style={navItemStyle}>
-                <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  style={logoutButtonStyle}
-                >
-                  Logout
-                </button>
-              </li>
+              <Link href="/profile">Profilo</Link>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                style={logoutButtonStyle}
+              >
+                Logout
+              </button>
             </>
           )}
-        </ul>
-      </nav>
+        </div>
+      </div>
     </header>
   );
-};
-
-const headerStyle = {
-  padding: '10px',
-  backgroundColor: '#f8f8f8',
-  borderBottom: '1px solid #ddd',
-};
-
-const navListStyle = {
-  display: 'flex',
-  listStyle: 'none',
-  padding: 0,
-  margin: 0,
-};
-
-const navItemStyle = {
-  marginRight: '20px',
 };
 
 const logoutButtonStyle = {
   background: 'none',
   border: 'none',
-  color: '#0070f3',
+  color: '#1e1068',
   cursor: 'pointer',
   textDecoration: 'underline',
-  padding: 0,
+  fontSize: '25px',
+  display: 'block',
+  padding: '8px',
+  transition: '0.3s',
 };
 
 export default Header;

@@ -29,7 +29,7 @@ export default function AddActivity({
 }) {
   const [title, setTitle] = useState('');
   const [orderGrade, setOrderGrade] = useState('');
-  const [topic, setTopic] = useState('');
+  const [selectedTopics, setSelectedTopics] = useState([]);
   const [subject, setSubject] = useState('');
   const [keyCompetencies, setKeyCompetencies] = useState([]);
   const [manifestoPrinciples, setManifestoPrinciples] = useState([]);
@@ -177,15 +177,25 @@ export default function AddActivity({
     </div>
 
     <div>
-      <label>Argomento:</label>
-      <select value={topic} onChange={(e) => setTopic(e.target.value)} required>
-        <option value="">Seleziona un argomento</option>
-        {availableTopics.map(topic => (
-          <option key={topic} value={topic}>
-            {topic}
-          </option>
-        ))}
-      </select>
+      <label>Argomenti:</label>
+      {availableTopics.map(topic => (
+        <div key={topic}>
+          <input
+            type="checkbox"
+            id={topic}
+            value={topic}
+            checked={selectedTopics.includes(topic)}
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedTopics([...selectedTopics, topic]);
+              } else {
+                setSelectedTopics(selectedTopics.filter(t => t !== topic));
+              }
+            }}
+          />
+          <label htmlFor={topic}>{topic}</label>
+        </div>
+      ))}
     </div>
 
     <div>
