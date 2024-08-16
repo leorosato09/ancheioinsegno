@@ -9,17 +9,19 @@ header {
   justify-content: space-between;
   padding: 0 20px;
   box-sizing: border-box;
-  position: relative; /* Necessario per posizionare il menu a comparsa */
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
 }
 
 .header-logos {
   display: flex;
   align-items: center;
+  margin-left:70px;
 }
 
 .header-logos img {
-  height: 80px; /* Altezza dei loghi */
-  margin-right: 15px;
+  height: 75px; /* Altezza dei loghi */
+  margin-right: 50px;
 }
 
 /* Stile per il menu hamburger */
@@ -30,6 +32,7 @@ header {
   width: 28px;
   height: 28px;
   cursor: pointer;
+  margin-right: 100px;
 }
 
 .hamburger-menu div {
