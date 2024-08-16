@@ -9,7 +9,7 @@ const Header = () => {
   return (
     <header>
       <div className="header-logos">
-        <image src="/images/ParoleO_Stili_Logo.svg" alt="Parole O_Stili" />
+        <image src="/images/Parole O_Stili | Logo.svg" alt="Parole O_Stili" />
         <image src="/images/AncheIoInsegno_Logo.svg" alt="#AncheIoInsegno" />
       </div>
       <div className="hamburger-menu" onClick={() => setNavOpen(true)}>
