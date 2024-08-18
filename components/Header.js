@@ -3,8 +3,8 @@ import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';
 
 const Header = () => {
-  const { data: session } = useSession(); // Recupera la sessione corrente
-  const [navOpen, setNavOpen] = useState(false); // Stato per gestire l'apertura del menu
+  const { data: session } = useSession();
+  const [navOpen, setNavOpen] = useState(false);
 
   return (
     <header>

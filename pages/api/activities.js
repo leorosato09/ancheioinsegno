@@ -3,13 +3,25 @@ import db from '/lib/db';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { title, orderGrade, topic, subject, keyCompetencies, manifestoPrinciples, description, sections, totalDuration, tags, slug } = req.body;
+      const { title, orderGrade, topics, subject, keyCompetencies, manifestoPrinciples, description, sections, totalDuration, tags, slug } = req.body;
 
       await db.query(
-        `INSERT INTO activities (title, order_grade, topic, subject, key_competencies, manifesto_principles, description, sections, total_duration, tags, slug)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-        [title, orderGrade, topic, subject, keyCompetencies, manifestoPrinciples, description, JSON.stringify(sections), totalDuration, tags, slug]
-      );
+        `INSERT INTO activities (title, order_grade, topics, subject, key_competencies, manifesto_principles, description, sections, total_duration, tags, slug)
+         VALUES ($1, $2, $3::text[], $4, $5::text[], $6::text[], $7, $8::jsonb, $9, $10::text[], $11)`,
+        [
+          title,
+          orderGrade,
+          topics,
+          subject,
+          keyCompetencies,
+          manifestoPrinciples,
+          description,
+          JSON.stringify(sections),
+          totalDuration,
+          tags,
+          slug
+        ]
+      );      
 
       res.status(201).json({ success: true });
     } catch (error) {
