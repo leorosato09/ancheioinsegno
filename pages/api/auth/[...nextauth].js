@@ -1,9 +1,10 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import db from "../../../lib/db"; // Assicurati di avere un file db.js per la connessione a PostgreSQL
+import db from "/lib/db";
 
 export default NextAuth({
+  debug: true,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -12,7 +13,6 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Trova l'utente nel database PostgreSQL in base all'email
         const { rows } = await db.query(
           "SELECT id, email, password, role FROM users WHERE email = $1",
           [credentials.email]
@@ -24,40 +24,42 @@ export default NextAuth({
           throw new Error("No user found with this email");
         }
 
-        // Confronta la password inserita con quella hashata nel database
         const isValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isValid) {
           throw new Error("Incorrect password");
         }
 
-        // Se l'autenticazione ha successo, restituisci l'utente
         return { id: user.id, email: user.email, role: user.role };
       },
     }),
   ],
   callbacks: {
-    async session({ session, token }) {
-      // Aggiungi il ruolo utente alla sessione
-      session.user.id = token.id;
-      session.user.role = token.role;
-      return session;
-    },
     async jwt({ token, user }) {
-      // Se l'utente è autenticato, aggiungi l'id e il ruolo al token
       if (user) {
         token.id = user.id;
         token.role = user.role;
       }
+      console.log("JWT token:", token);
       return token;
     },
+    async session({ session, token }) {
+      console.log("Session before assignment:", session);
+      session.user.id = token.id;
+      session.user.role = token.role;
+      console.log("Session after assignment:", session);
+      return session;
+    }
   },
   pages: {
-    signIn: '/login', // Pagina di login
-    error: '/auth/error', // Pagina di errore in caso di problemi di autenticazione
+    signIn: '/login',
+    error: '/auth/error',
   },
-  secret: process.env.NEXTAUTH_SECRET, // Utilizza la chiave segreta dal file .env.local
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
-    jwt: true, // Usa JWT per le sessioni
+    jwt: true,
+  },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET,
   },
 });
