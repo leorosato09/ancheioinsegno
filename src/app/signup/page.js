@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -36,8 +38,7 @@ export default function Signup() {
       } else {
         console.log('Signup successful');
         setSuccess('Registrazione avvenuta con successo! Controlla la tua email per verificare il tuo account.');
-        // Se desideri, puoi reindirizzare l'utente alla pagina di login
-        // router.push('/login');
+        router.push('/login');
       }
     } catch (err) {
       console.error('Errore durante la registrazione:', err);

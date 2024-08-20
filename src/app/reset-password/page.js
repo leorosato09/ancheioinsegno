@@ -1,13 +1,16 @@
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+'use client';
 
-export default function ResetPassword() {
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+function ResetPasswordForm() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const router = useRouter();
-  const { token } = router.query;
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');  // Recupera il token dalla query string
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,5 +69,13 @@ export default function ResetPassword() {
         <button type="submit">Resetta Password</button>
       </form>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

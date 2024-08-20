@@ -1,80 +1,36 @@
-import React, { useState } from 'react';
-import db from '/lib/db';
-import { useRouter } from 'next/router';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { FaStar } from 'react-icons/fa';
 
-export async function getStaticPaths() {
-  const result = await db.query('SELECT slug FROM activities');
-  const paths = result.rows.map(activity => ({
-    params: { slug: activity.slug },
-  }));
-
-  return {
-    paths,
-    fallback: 'blocking',
-  };
-}
-
-export async function getStaticProps({ params }) {
-  const { slug } = params;
-
-  const result = await db.query('SELECT * FROM activities WHERE slug = $1', [slug]);
-  const gradesResult = await db.query('SELECT * FROM order_grades');
-
-  if (result.rows.length === 0) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const activity = result.rows[0];
-
-  if (activity.created_at) {
-    activity.created_at = activity.created_at.toISOString();
-  }
-  if (activity.updated_at) {
-    activity.updated_at = activity.updated_at.toISOString();
-  }
-
-  const relatedActivitiesResult = await db.query(
-    `SELECT * FROM activities 
-     WHERE id != $1 AND 
-           order_grade = $2 AND 
-           (topics && $3::text[] OR key_competencies && $4::text[])
-     LIMIT 5`,
-    [activity.id, activity.order_grade, activity.topics, activity.key_competencies]
-  );
-
-  const relatedActivities = relatedActivitiesResult.rows.map((relatedActivity) => {
-    // Converti created_at e updated_at in stringhe ISO per le attività correlate
-    if (relatedActivity.created_at) {
-      relatedActivity.created_at = relatedActivity.created_at.toISOString();
-    }
-    if (relatedActivity.updated_at) {
-      relatedActivity.updated_at = relatedActivity.updated_at.toISOString();
-    }
-    return relatedActivity;
-  });
-
-  return {
-    props: {
-      activity,
-      relatedActivities: relatedActivitiesResult.rows,
-      orderGrades: gradesResult.rows,
-    },
-    revalidate: 1,
-  };
-}
-
-export default function ActivityPage({ activity, relatedActivities = [], orderGrades = [] }) {
+export default function ActivityPage({ params }) {
+  const [activity, setActivity] = useState(null);
+  const [relatedActivities, setRelatedActivities] = useState([]);
+  const [orderGrades, setOrderGrades] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
-  const router = useRouter();
-
   const [studentsCount, setStudentsCount] = useState('');
   const [orderGrade, setOrderGrade] = useState('');
   const [year, setYear] = useState('');
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/activities/${params.slug}`);
+        const data = await response.json();
+        setActivity(data.activity);
+        setRelatedActivities(data.relatedActivities);
+        setOrderGrades(data.orderGrades);
+      } catch (error) {
+        console.error('Error fetching activity data:', error);
+      }
+    };
+
+    fetchData();
+  }, [params.slug]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -98,7 +54,7 @@ export default function ActivityPage({ activity, relatedActivities = [], orderGr
 
       if (res.ok) {
         alert('Feedback inviato con successo!');
-        router.reload(); // Ricarica la pagina
+        router.refresh(); // Ricarica la pagina
       } else {
         alert('Errore durante l\'invio del feedback.');
       }
@@ -234,7 +190,7 @@ export default function ActivityPage({ activity, relatedActivities = [], orderGr
           <div className="container-feedback">
             <form onSubmit={handleSubmit} className="feedback-form">
               <h3 className="form-title">
-                Hai completato l'attività? Inviaci la tua valutazione, entra ufficialmente nella community!
+                Hai completato l&apos;attività? Inviaci la tua valutazione, entra ufficialmente nella community!
               </h3>
               <div className="container-form">
                 <h3 style={{ fontSize: '15px', color: '#1d0f67' }}>

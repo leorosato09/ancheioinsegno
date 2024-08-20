@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import db from "/lib/db";
 
 export default NextAuth({
-  debug: true,
   providers: [
     CredentialsProvider({
       name: "Credentials",
